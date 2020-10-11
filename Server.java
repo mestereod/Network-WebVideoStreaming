@@ -1,3 +1,6 @@
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.*;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -19,15 +22,27 @@ public class Server extends Thread {
 
 	public void run() {
     	try {
-			clientsOut.add(new DataOutputStream(server.getOutputStream()));            
-        	String msg = in.readUTF();
-        	System.out.println(msg);
-        	while(!"Quit".equalsIgnoreCase(msg) && msg != null) {
-   				msg = in.readUTF();
-   				System.out.println(msg);
-   			}
-   			System.out.println("Closing connection with " + server.getRemoteSocketAddress());
-   			server.close();
+			DataOutputStream out = new DataOutputStream(server.getOutputStream());
+			clientsOut.add(out);
+			Robot rb = new Robot();
+			while (true) {
+				BufferedImage screencap = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ImageIO.write(screencap,"jpg",baos);
+				out.writeInt(baos.size());
+				out.write(baos.toByteArray());
+				out.flush();
+				Thread.sleep(15);
+			}
+
+//			String msg = in.readUTF();
+//        	System.out.println(msg);
+//        	while(!"Quit".equalsIgnoreCase(msg) && msg != null) {
+//   				msg = in.readUTF();
+//   				System.out.println(msg);
+//   			}
+//   			System.out.println("Closing connection with " + server.getRemoteSocketAddress());
+//   			server.close();
    		}
    		catch(Exception e) {
    			e.printStackTrace();
