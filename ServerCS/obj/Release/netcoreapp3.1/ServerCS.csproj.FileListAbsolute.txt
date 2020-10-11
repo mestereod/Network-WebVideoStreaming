@@ -1,0 +1,12 @@
+F:\Codes\Network-WebVideoStreaming\ServerCS\bin\Release\netcoreapp3.1\ServerCS.exe
+F:\Codes\Network-WebVideoStreaming\ServerCS\bin\Release\netcoreapp3.1\ServerCS.deps.json
+F:\Codes\Network-WebVideoStreaming\ServerCS\bin\Release\netcoreapp3.1\ServerCS.runtimeconfig.json
+F:\Codes\Network-WebVideoStreaming\ServerCS\bin\Release\netcoreapp3.1\ServerCS.runtimeconfig.dev.json
+F:\Codes\Network-WebVideoStreaming\ServerCS\bin\Release\netcoreapp3.1\ServerCS.dll
+F:\Codes\Network-WebVideoStreaming\ServerCS\bin\Release\netcoreapp3.1\ServerCS.pdb
+F:\Codes\Network-WebVideoStreaming\ServerCS\obj\Release\netcoreapp3.1\ServerCS.AssemblyInfoInputs.cache
+F:\Codes\Network-WebVideoStreaming\ServerCS\obj\Release\netcoreapp3.1\ServerCS.AssemblyInfo.cs
+F:\Codes\Network-WebVideoStreaming\ServerCS\obj\Release\netcoreapp3.1\ServerCS.csproj.CoreCompileInputs.cache
+F:\Codes\Network-WebVideoStreaming\ServerCS\obj\Release\netcoreapp3.1\ServerCS.dll
+F:\Codes\Network-WebVideoStreaming\ServerCS\obj\Release\netcoreapp3.1\ServerCS.pdb
+F:\Codes\Network-WebVideoStreaming\ServerCS\obj\Release\netcoreapp3.1\ServerCS.genruntimeconfig.cache

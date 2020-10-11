@@ -1,5 +1,3 @@
-/client/Client/nbproject/private/
-/server/nbproject/private/
 /Client/build/
-/Client/dist/
 /Server/build/
+/.vscode/
