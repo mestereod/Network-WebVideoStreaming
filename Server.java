@@ -27,10 +27,12 @@ public class Server extends Thread {
 			Robot rb = new Robot(); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaServer.java#L151
 			while (true) {
 				BufferedImage screencap = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ImageIO.write(screencap,"jpg",baos);
-				out.writeInt(baos.size());
+				ImageIO.write(screencap,"jpeg",baos);
+				System.out.println(baos.size());
 				out.write(baos.toByteArray()); // reference: https://stackoverflow.com/questions/25086868/how-to-send-images-through-sockets-in-java
+
 				out.flush();
 				Thread.sleep(15);
 			}

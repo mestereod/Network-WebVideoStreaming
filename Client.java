@@ -41,15 +41,13 @@ public class Client extends Thread {
 
 		while (true) {
 			try {
-				byteLength = in.readInt();
-				image = new byte[byteLength];
-				in.read(image);
-				BufferedImage img = ImageIO.read(new ByteArrayInputStream(image));
+
+				BufferedImage img = ImageIO.read(in);
 
 				if (img != null) {
 					gui.jl.setIcon(new ImageIcon(img)); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
 					frame.repaint();
-					Thread.sleep(15);
+					Thread.sleep(170);
 				}
 
 
