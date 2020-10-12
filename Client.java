@@ -3,13 +3,15 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.net.*;
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Scanner;
 
 public class Client extends Thread {
 
 	private DataOutputStream out;
 	private DataInputStream in;
-	private int byteLength;
+	private int byteLength = 0;
 	private byte[] image;
 
 
@@ -41,13 +43,34 @@ public class Client extends Thread {
 
 		while (true) {
 			try {
+				byteLength = 1000000;
+				image = new byte[byteLength];
+				in.readFully(image);
+				System.out.println("len: " );
+				int imageLength;
 
-				BufferedImage img = ImageIO.read(in);
+				byte[] imageSizeBytes = new byte[4];
+
+				for(int i = 0; i < 4; i++){
+					imageSizeBytes[i] = image[i];
+					//System.out.println(imageSizeBytes[i]);
+				}
+				imageLength = ByteBuffer.wrap(imageSizeBytes).order(ByteOrder.nativeOrder()).getInt();
+				System.out.println(imageLength);
+				//System.out.println(imageLength);
+
+				byte finalImage[] = new byte[imageLength];
+
+				for(int i = 4; i < imageLength + 4; i++){
+					finalImage[i-4] = image[i];
+				}
+
+				BufferedImage img = ImageIO.read(new ByteArrayInputStream(finalImage));
 
 				if (img != null) {
 					gui.jl.setIcon(new ImageIcon(img)); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
 					frame.repaint();
-					Thread.sleep(170);
+					Thread.sleep(2);
 				}
 
 

@@ -3,6 +3,8 @@ import java.awt.image.BufferedImage;
 import java.awt.*;
 import java.net.*;
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 
 public class Server extends Thread {
@@ -30,11 +32,24 @@ public class Server extends Thread {
 
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				ImageIO.write(screencap,"jpeg",baos);
-				System.out.println(baos.size());
-				out.write(baos.toByteArray()); // reference: https://stackoverflow.com/questions/25086868/how-to-send-images-through-sockets-in-java
+				byte[] baos_array  = baos.toByteArray();
+				byte[] baos_fixed_array = new byte[1000000];
+				for(int i = 4; i < baos_array.length + 4; i++){
+					baos_fixed_array[i] = baos_array[i-4];
+				}
+
+				for(int i = 0; i < 4; i++){
+					baos_fixed_array[i] = ByteBuffer.allocate(4).order(ByteOrder.nativeOrder()).putInt(baos_array.length).array()[i];
+				}
+
+				System.out.println(baos_array.length);
+				out.write(baos_fixed_array); // reference: https://stackoverflow.com/questions/25086868/how-to-send-images-through-sockets-in-java
+
+				//out.writeInt(baos.size());
 
 				out.flush();
-				Thread.sleep(15);
+
+				Thread.sleep(7);
 			}
 
 //			String msg = in.readUTF();
