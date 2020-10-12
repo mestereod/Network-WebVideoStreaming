@@ -34,7 +34,7 @@ public class Client extends Thread {
 
 		JFrame frame = new JFrame("test");
 		GUI gui = new GUI();
-		frame.setContentPane(gui.panel1);
+		frame.setContentPane(gui.panel1); // reference: https://www.youtube.com/watch?v=5vSyylPPEko
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
@@ -47,7 +47,7 @@ public class Client extends Thread {
 				BufferedImage img = ImageIO.read(new ByteArrayInputStream(image));
 
 				if (img != null) {
-					gui.jl.setIcon(new ImageIcon(img));
+					gui.jl.setIcon(new ImageIcon(img)); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
 					frame.repaint();
 					Thread.sleep(15);
 				}

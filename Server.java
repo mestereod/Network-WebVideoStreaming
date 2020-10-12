@@ -24,13 +24,13 @@ public class Server extends Thread {
     	try {
 			DataOutputStream out = new DataOutputStream(server.getOutputStream());
 			clientsOut.add(out);
-			Robot rb = new Robot();
+			Robot rb = new Robot(); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaServer.java#L151
 			while (true) {
 				BufferedImage screencap = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				ImageIO.write(screencap,"jpg",baos);
 				out.writeInt(baos.size());
-				out.write(baos.toByteArray());
+				out.write(baos.toByteArray()); // reference: https://stackoverflow.com/questions/25086868/how-to-send-images-through-sockets-in-java
 				out.flush();
 				Thread.sleep(15);
 			}
@@ -55,7 +55,7 @@ public class Server extends Thread {
 			serverSocket = new ServerSocket(port);
 			clientsOut = new ArrayList<DataOutputStream>();
 
-			while(true) {
+			while(true) { // reference: https://stackoverflow.com/questions/10131377/socket-programming-multiple-client-to-one-server
 				System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
 				Socket server = serverSocket.accept();
 				System.out.println("Just connected to " + server.getRemoteSocketAddress());
