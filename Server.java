@@ -28,38 +28,20 @@ public class Server extends Thread {
 			clientsOut.add(out);
 			Robot rb = new Robot(); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaServer.java#L151
 			while (true) {
-				BufferedImage screencap = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+				// reference: https://stackoverflow.com/questions/19839172/how-to-read-all-of-inputstream-in-server-socket-java
+				BufferedImage screenshot = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize())); // getting the screenshot
 
+				// converting the screenshot into bytes
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ImageIO.write(screencap,"jpeg",baos);
-				byte[] baos_array  = baos.toByteArray();
-				byte[] baos_fixed_array = new byte[1000000];
-				for(int i = 4; i < baos_array.length + 4; i++){
-					baos_fixed_array[i] = baos_array[i-4];
-				}
+				ImageIO.write(screenshot,"jpeg",baos);
+				byte[] byteImg  = baos.toByteArray();
 
-				for(int i = 0; i < 4; i++){
-					baos_fixed_array[i] = ByteBuffer.allocate(4).order(ByteOrder.nativeOrder()).putInt(baos_array.length).array()[i];
-				}
+				out.writeInt(byteImg.length); // sending the size of the image
+				out.write(byteImg); // sending the image // reference: https://stackoverflow.com/questions/25086868/how-to-send-images-through-sockets-in-java
+				out.flush(); // forcing to write in the socket everything on the DataOutputStream buffer
 
-				System.out.println(baos_array.length);
-				out.write(baos_fixed_array); // reference: https://stackoverflow.com/questions/25086868/how-to-send-images-through-sockets-in-java
-
-				//out.writeInt(baos.size());
-
-				out.flush();
-
-				Thread.sleep(7);
+				Thread.sleep(15);
 			}
-
-//			String msg = in.readUTF();
-//        	System.out.println(msg);
-//        	while(!"Quit".equalsIgnoreCase(msg) && msg != null) {
-//   				msg = in.readUTF();
-//   				System.out.println(msg);
-//   			}
-//   			System.out.println("Closing connection with " + server.getRemoteSocketAddress());
-//   			server.close();
    		}
    		catch(Exception e) {
    			e.printStackTrace();
