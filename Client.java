@@ -1,4 +1,5 @@
 import javax.imageio.ImageIO;
+import javax.sound.midi.SysexMessage;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.net.*;
@@ -11,6 +12,7 @@ public class Client extends Thread {
 
 	private DataOutputStream out;
 	private DataInputStream in;
+	ListerClient lister;
 
 	public Client(String serverName, int port ) {
 		try {
@@ -23,6 +25,9 @@ public class Client extends Thread {
 
 			InputStream inFromServer = client.getInputStream();
 			this.in = new DataInputStream(inFromServer);
+			Thread l1 = new ListerClient(in);
+			Thread l2 = new ListerClient(in);
+			l1.start();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -40,18 +45,15 @@ public class Client extends Thread {
 
 		while (true) {
 			try {
-
-				int len = in.readInt(); // receiving the screenshot's length
-
-				byte[] byteImg = new byte[len];
-				in.readFully(byteImg, 0, len); // reading the screenshot
-
-				BufferedImage img = ImageIO.read(new ByteArrayInputStream(byteImg)); // converting the bytes into an image
-
+				long start = System.currentTimeMillis();
 				// showing the image on the GUI
-				gui.jl.setIcon(new ImageIcon(img)); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
+				if(lister.b_images.isEmpty()) {
+					Thread.sleep(5);
+					continue;
+				}
+				gui.jl.setIcon(new ImageIcon(lister.b_images.remove())); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
 				frame.repaint();
-
+				//System.out.println(System.currentTimeMillis() - start);
 				Thread.sleep(15);
 
 			} catch (Exception e) {
@@ -63,6 +65,7 @@ public class Client extends Thread {
 
 	public static void main(String [] args) {
 		Scanner scan = new Scanner(System.in);
+		//String serverName = "179.247.249.24";
 		String serverName = "localhost";
 		int port = 12345;
 		Thread clt = new Client(serverName, port);

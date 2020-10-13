@@ -14,7 +14,7 @@ public class Server extends Thread {
 	private static ArrayList<DataOutputStream> clientsOut; // used for sending messages to all clients
 	private Socket server;
 	private DataInputStream in;
-	static PrintMananger printM;
+	private static PrintMananger printM;
 
 	public Server(Socket server) {
    		this.server = server;
@@ -34,17 +34,17 @@ public class Server extends Thread {
 			while (true) {
 				long start = System.currentTimeMillis();
 				// reference: https://stackoverflow.com/questions/19839172/how-to-read-all-of-inputstream-in-server-socket-java
-				byte[] byteImg;
-				if(!printM.images.isEmpty()) byteImg = printM.images.remove();
-				else{
-					Thread.sleep(5);
-					continue;
+				byte[] byteImg = ServerUpdateImage.img_bytes;
+
+				if(byteImg.length == 1) {
+					Thread.sleep(15);
+					continue; //coxambre
 				}
 
 				out.writeInt(byteImg.length); // sending the size of the image
 				out.write(byteImg); // sending the image // reference: https://stackoverflow.com/questions/25086868/how-to-send-images-through-sockets-in-java
 				out.flush(); // forcing to write in the socket everything on the DataOutputStream buffer
-				System.out.println(System.currentTimeMillis() - start);
+				//System.out.println(System.currentTimeMillis() - start);
 				Thread.sleep(15);
 			}
    		}
@@ -64,6 +64,7 @@ public class Server extends Thread {
 			Thread p1 = new PrintMananger();
 			Thread p2 = new PrintMananger();
 			Thread p3 = new PrintMananger();
+			Thread sui = new ServerUpdateImage();
 
 			while(true) { // reference: https://stackoverflow.com/questions/10131377/socket-programming-multiple-client-to-one-server
 				System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
@@ -71,7 +72,7 @@ public class Server extends Thread {
 				if(!isPrinting){
 					p1.start();
 					p2.start();
-					p3.start();
+					sui.start();
 					isPrinting = true;
 				}
 				System.out.println("Just connected to " + server.getRemoteSocketAddress());
