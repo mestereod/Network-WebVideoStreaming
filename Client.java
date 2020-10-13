@@ -11,9 +11,6 @@ public class Client extends Thread {
 
 	private DataOutputStream out;
 	private DataInputStream in;
-	private int byteLength = 0;
-	private byte[] image;
-
 
 	public Client(String serverName, int port ) {
 		try {
@@ -43,36 +40,19 @@ public class Client extends Thread {
 
 		while (true) {
 			try {
-				byteLength = 1000000;
-				image = new byte[byteLength];
-				in.readFully(image);
-				System.out.println("len: " );
-				int imageLength;
 
-				byte[] imageSizeBytes = new byte[4];
+				int len = in.readInt(); // receiving the screenshot's length
 
-				for(int i = 0; i < 4; i++){
-					imageSizeBytes[i] = image[i];
-					//System.out.println(imageSizeBytes[i]);
-				}
-				imageLength = ByteBuffer.wrap(imageSizeBytes).order(ByteOrder.nativeOrder()).getInt();
-				System.out.println(imageLength);
-				//System.out.println(imageLength);
+				byte[] byteImg = new byte[len];
+				in.readFully(byteImg, 0, len); // reading the screenshot
 
-				byte finalImage[] = new byte[imageLength];
+				BufferedImage img = ImageIO.read(new ByteArrayInputStream(byteImg)); // converting the bytes into an image
 
-				for(int i = 4; i < imageLength + 4; i++){
-					finalImage[i-4] = image[i];
-				}
+				// showing the image on the GUI
+				gui.jl.setIcon(new ImageIcon(img)); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
+				frame.repaint();
 
-				BufferedImage img = ImageIO.read(new ByteArrayInputStream(finalImage));
-
-				if (img != null) {
-					gui.jl.setIcon(new ImageIcon(img)); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
-					frame.repaint();
-					Thread.sleep(2);
-				}
-
+				Thread.sleep(15);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -87,36 +67,5 @@ public class Client extends Thread {
 		int port = 12345;
 		Thread clt = new Client(serverName, port);
 		clt.start();
-
-//		try {
-//			System.out.println("Connecting to " + serverName + " on port " + port);
-//        	Socket client = new Socket(serverName, port);
-//
-//        	System.out.println("Just connected to " + client.getRemoteSocketAddress());
-//        	OutputStream outToServer = client.getOutputStream();
-//        	DataOutputStream out = new DataOutputStream(outToServer);
-//
-//        	InputStream inFromServer = client.getInputStream();
-//         	DataInputStream in = new DataInputStream(inFromServer);
-//			int byteLength = in.readInt();
-//			byte[] image = new byte[byteLength];
-//			in.read(image);
-//			BufferedImage img = ImageIO.read(new ByteArrayInputStream(image));
-//			ImageIO.write(img, "jpg", new File("screen.jpg"));
-//
-//        	out.writeUTF("Hello from " + client.getLocalSocketAddress());
-//
-//        	String msg = "";
-//        	while(!"Quit".equalsIgnoreCase(msg) && msg != null) {
-//        		msg = scan.nextLine();
-//        		out.writeUTF(msg);
-//
-//         		//System.out.println("Server says " + in.readUTF());
-//   			}
-//   			client.close();
-//		}
-//		catch(Exception e) {
-//			e.printStackTrace();
-//		}
 	}
 }
