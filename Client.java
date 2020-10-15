@@ -47,11 +47,10 @@ public class Client extends Thread {
 			try {
 				long start = System.currentTimeMillis();
 				// showing the image on the GUI
-				if(lister.b_images.isEmpty()) {
-					Thread.sleep(5);
-					continue;
-				}
-				gui.jl.setIcon(new ImageIcon(lister.b_images.remove())); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
+
+				if (img != null)
+					gui.jl.setIcon(new ImageIcon(img)); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
+
 				frame.repaint();
 				//System.out.println(System.currentTimeMillis() - start);
 				Thread.sleep(15);
