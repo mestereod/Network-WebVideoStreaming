@@ -34,7 +34,6 @@ public class ScreenPrinter extends Thread {
     public void run() {
         while(true) {
             try {
-
                 // reference: https://stackoverflow.com/questions/19839172/how-to-read-all-of-inputstream-in-server-socket-java
                 BufferedImage screenshot = rb.createScreenCapture(screen); // getting the screenshot
 
@@ -42,8 +41,8 @@ public class ScreenPrinter extends Thread {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(screenshot, "jpeg", baos);
 
-                if (baos != null) {
-                    byte[] byteImg = baos.toByteArray();
+                byte[] byteImg = baos.toByteArray();
+                synchronized (this) {
                     imgQueue.add(byteImg);
                 }
 

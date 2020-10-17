@@ -11,21 +11,22 @@ public class Server extends Thread {
 	private static ArrayList<DataInputStream> clientsIn;
 	public static Queue<byte[]> imgQueue;
 
-	synchronized public void run() {
+	public void run() {
 
 		while (true) {
-
-			byte[] byteImg = imgQueue.poll();
-			if (byteImg != null) {
-				for (Iterator<DataOutputStream> it = clientsOut.iterator(); it.hasNext(); ) {
-					DataOutputStream out = it.next();
-					try {
-						out.writeInt(byteImg.length); // sending the size of the image
-						out.write(byteImg); // sending the image // reference: https://stackoverflow.com/questions/25086868/how-to-send-images-through-sockets-in-java
-						out.flush(); // forcing to write in the socket everything on the DataOutputStream buffer
-					} catch (IOException ioException) {
-						it.remove();
-						ioException.printStackTrace();
+			synchronized (this) {
+				byte[] byteImg = imgQueue.poll();
+				if (byteImg != null) {
+					for (Iterator<DataOutputStream> it = clientsOut.iterator(); it.hasNext(); ) {
+						DataOutputStream out = it.next();
+						try {
+							out.writeInt(byteImg.length); // sending the size of the image
+							out.write(byteImg); // sending the image // reference: https://stackoverflow.com/questions/25086868/how-to-send-images-through-sockets-in-java
+							out.flush(); // forcing to write in the socket everything on the DataOutputStream buffer
+						} catch (IOException ioException) {
+							it.remove();
+							ioException.printStackTrace();
+						}
 					}
 				}
 			}
@@ -39,7 +40,7 @@ public class Server extends Thread {
 		}
 	}
 
-	synchronized public static void main(String [] args) {
+	public static void main(String [] args) {
 		int port = 12345;
 		try {
 			serverSocket = new ServerSocket(port);
@@ -48,6 +49,9 @@ public class Server extends Thread {
 
 			Thread t = new Server();
 			t.start();
+			Thread serverThread = new Server();
+			serverThread.start();
+			ScreenPrinter.startScreenshots(3,15,imgQueue);
 
 			while(true) { // reference: https://stackoverflow.com/questions/10131377/socket-programming-multiple-client-to-one-server
 				System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
