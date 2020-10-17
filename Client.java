@@ -50,6 +50,7 @@ public class Client extends Thread {
 				Image img = ImageIO.read(new ByteArrayInputStream(byteImg)).getScaledInstance(frame.getWidth(),frame.getHeight(), Image.SCALE_DEFAULT); // converting the bytes into an image
 
 				// showing the image on the GUI
+       
 				if (img != null)
 					gui.jl.setIcon(new ImageIcon(img)); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
 				frame.getContentPane().repaint();

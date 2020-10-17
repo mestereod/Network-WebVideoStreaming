@@ -54,7 +54,6 @@ public class Server extends Thread {
 				Socket server = serverSocket.accept();
 				System.out.println("Just connected to " + server.getRemoteSocketAddress());
 				clientsOut.add(new DataOutputStream(server.getOutputStream()));
-				ScreenPrinter.startScreenshots(2,30,imgQueue);
 			}
 
 		} catch (Exception e) {
