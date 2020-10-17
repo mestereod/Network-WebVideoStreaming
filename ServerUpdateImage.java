@@ -8,11 +8,11 @@ public class ServerUpdateImage extends Thread{
             while(true) {
                 //System.out.println("rodando");
                 if (PrintMananger.images.isEmpty()) {
-                    Thread.sleep(15);
+                    Thread.sleep(10);
                     continue;
                 }
                 img_bytes = PrintMananger.images.remove();
-                Thread.sleep(15);
+                Thread.sleep(33);
             }
         }
         catch (Exception e){

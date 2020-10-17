@@ -1,6 +1,6 @@
 import javax.imageio.ImageIO;
-import javax.sound.midi.SysexMessage;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.*;
 import java.io.*;
@@ -12,7 +12,6 @@ public class Client extends Thread {
 
 	private DataOutputStream out;
 	private DataInputStream in;
-	ListerClient lister;
 
 	public Client(String serverName, int port ) {
 		try {
@@ -25,9 +24,6 @@ public class Client extends Thread {
 
 			InputStream inFromServer = client.getInputStream();
 			this.in = new DataInputStream(inFromServer);
-			Thread l1 = new ListerClient(in);
-			Thread l2 = new ListerClient(in);
-			l1.start();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -36,7 +32,7 @@ public class Client extends Thread {
 
 	public void run() {
 
-		JFrame frame = new JFrame("test");
+		JFrame frame = new JFrame("Streaming");
 		GUI gui = new GUI();
 		frame.setContentPane(gui.panel1); // reference: https://www.youtube.com/watch?v=5vSyylPPEko
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -45,15 +41,19 @@ public class Client extends Thread {
 
 		while (true) {
 			try {
-				long start = System.currentTimeMillis();
+
+				int len = in.readInt(); // receiving the screenshot's length
+
+				byte[] byteImg = new byte[len];
+				in.readFully(byteImg, 0, len); // reading the screenshot
+
+				Image img = ImageIO.read(new ByteArrayInputStream(byteImg)).getScaledInstance(frame.getWidth(),frame.getHeight(), Image.SCALE_DEFAULT); // converting the bytes into an image
+
 				// showing the image on the GUI
-				if(lister.b_images.isEmpty()) {
-					Thread.sleep(5);
-					continue;
-				}
-				gui.jl.setIcon(new ImageIcon(lister.b_images.remove())); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
-				frame.repaint();
-				//System.out.println(System.currentTimeMillis() - start);
+				if (img != null)
+					gui.jl.setIcon(new ImageIcon(img)); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
+				frame.getContentPane().repaint();
+
 				Thread.sleep(15);
 
 			} catch (Exception e) {
@@ -65,7 +65,6 @@ public class Client extends Thread {
 
 	public static void main(String [] args) {
 		Scanner scan = new Scanner(System.in);
-		//String serverName = "179.247.249.24";
 		String serverName = "localhost";
 		int port = 12345;
 		Thread clt = new Client(serverName, port);
