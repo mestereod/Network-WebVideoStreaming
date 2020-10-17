@@ -1,3 +1,5 @@
+import org.imgscalr.Scalr;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -7,6 +9,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Scanner;
+
 
 public class Client extends Thread {
 
@@ -47,12 +50,12 @@ public class Client extends Thread {
 				byte[] byteImg = new byte[len];
 				in.readFully(byteImg, 0, len); // reading the screenshot
 
-				Image img = ImageIO.read(new ByteArrayInputStream(byteImg)).getScaledInstance(frame.getWidth(),frame.getHeight(), Image.SCALE_DEFAULT); // converting the bytes into an image
+				BufferedImage img = ImageIO.read(new ByteArrayInputStream(byteImg)); // converting the bytes into an image
+				BufferedImage image = Scalr.resize(img, Scalr.Method.BALANCED, frame.getWidth(), frame.getHeight());
 
 				// showing the image on the GUI
-       
 				if (img != null)
-					gui.jl.setIcon(new ImageIcon(img)); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
+					gui.jl.setIcon(new ImageIcon(image)); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
 				frame.getContentPane().repaint();
 
 				Thread.sleep(15);
