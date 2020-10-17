@@ -1,45 +1,27 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 
 public class GUI {
-    public JPanel panel1;
-    public JButton button1;
+    public JPanel main;
     public JLabel jl;
+    public JPanel video;
+    public JScrollPane text;
+    private JTextArea textArea1;
+    private JPanel chat;
+    private JButton sendButton;
+    private JTextArea textArea2;
 
     public GUI() {
-        button1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("test");
+        JFrame frame = new JFrame("Streaming");
         GUI gui = new GUI();
-        frame.setContentPane(gui.panel1);
+        frame.setContentPane(gui.main); // reference: https://www.youtube.com/watch?v=5vSyylPPEko
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-
-        try {
-
-            BufferedImage img = ImageIO.read(new File("screen.jpg"));;
-
-            gui.jl.setIcon(new ImageIcon(img));
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        frame.repaint();
-
-
     }
 }
