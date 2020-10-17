@@ -2,12 +2,9 @@ import org.imgscalr.Scalr;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.*;
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Scanner;
 
 
@@ -37,7 +34,7 @@ public class Client extends Thread {
 
 		JFrame frame = new JFrame("Streaming");
 		GUI gui = new GUI();
-		frame.setContentPane(gui.panel1); // reference: https://www.youtube.com/watch?v=5vSyylPPEko
+		frame.setContentPane(gui.main); // reference: https://www.youtube.com/watch?v=5vSyylPPEko
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
@@ -51,7 +48,7 @@ public class Client extends Thread {
 				in.readFully(byteImg, 0, len); // reading the screenshot
 
 				BufferedImage img = ImageIO.read(new ByteArrayInputStream(byteImg)); // converting the bytes into an image
-				BufferedImage image = Scalr.resize(img, Scalr.Method.BALANCED, frame.getWidth(), frame.getHeight());
+				BufferedImage image = Scalr.resize(img, Scalr.Method.BALANCED,gui.video.getSize().width, gui.video.getSize().height);
 
 				// showing the image on the GUI
 				if (img != null)
