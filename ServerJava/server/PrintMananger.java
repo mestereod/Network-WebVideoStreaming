@@ -21,6 +21,7 @@ public class PrintMananger extends Thread {
                 ImageIO.write(screenshot,"jpeg",baos);
                 byte[] byteImg  = baos.toByteArray();
                 images.add(byteImg);
+                System.out.println(images.size());
                 Thread.sleep(1);
             }
         }

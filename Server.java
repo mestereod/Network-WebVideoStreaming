@@ -38,34 +38,26 @@ public class Server extends Thread {
 
 		}
 	}
-   
+
 	synchronized public static void main(String [] args) {
 		int port = 12345;
-		boolean isPrinting = false;
-
 		try {
 			serverSocket = new ServerSocket(port);
 			clientsOut = new ArrayList<DataOutputStream>();
 			imgQueue = new LinkedList<byte[]>();
-			ScreenPrinter.startScreenshots(3,15,imgQueue);
+
 			Thread t = new Server();
 			t.start();
 
 			while(true) { // reference: https://stackoverflow.com/questions/10131377/socket-programming-multiple-client-to-one-server
 				System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
 				Socket server = serverSocket.accept();
-				if(!isPrinting){
-					p1.start();
-					p2.start();
-					sui.start();
-					isPrinting = true;
-				}
 				System.out.println("Just connected to " + server.getRemoteSocketAddress());
 				clientsOut.add(new DataOutputStream(server.getOutputStream()));
 			}
 
 		} catch (Exception e) {
-        	e.printStackTrace();
-    	}
+			e.printStackTrace();
+		}
 	}
 }
