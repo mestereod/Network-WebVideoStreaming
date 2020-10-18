@@ -7,7 +7,8 @@ import java.util.Queue;
 
 public class Server extends Thread {
 	private static ServerSocket serverSocket;
-	private static ArrayList<DataOutputStream> clientsOut; // used for sending messages to all clients
+	private static ServerSocket serverSocketChat;
+	private static ArrayList<DataOutputStream> clientsOut; // used for sending the frames to all clients
 	private static ArrayList<DataInputStream> clientsIn;
 	public static Queue<byte[]> imgQueue;
 
@@ -42,8 +43,10 @@ public class Server extends Thread {
 
 	public static void main(String [] args) {
 		int port = 12345;
+		int portChat = 12346;
 		try {
 			serverSocket = new ServerSocket(port);
+			serverSocketChat = new ServerSocket(portChat);
 			clientsOut = new ArrayList<DataOutputStream>();
 			imgQueue = new LinkedList<byte[]>();
 			Thread serverThread = new Server();
@@ -56,10 +59,54 @@ public class Server extends Thread {
 				System.out.println("Just connected to " + server.getRemoteSocketAddress());
 				clientsOut.add(new DataOutputStream(server.getOutputStream()));
 
+				// chat
+				Socket chatSocket = serverSocketChat.accept();
+				Thread chat = new ServerChatListener(chatSocket);
+				chat.start();
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+}
+
+class ServerChatListener extends Thread {
+
+	private static ArrayList<DataOutputStream> clientsOut; // used for sending messages to all clients
+	private DataInputStream in;
+
+	public ServerChatListener(Socket socket) throws IOException {
+		in = new DataInputStream(socket.getInputStream());
+		if (clientsOut == null)
+			clientsOut = new ArrayList<DataOutputStream>();
+		synchronized (this) {
+			clientsOut.add(new DataOutputStream(socket.getOutputStream()));
+		}
+	}
+
+	public void run() {
+		while(true) {
+			String chatMessage = null;
+			try {
+				chatMessage = in.readUTF();
+				if (chatMessage != null) {
+					synchronized (this) {
+						for (Iterator<DataOutputStream> it = clientsOut.iterator(); it.hasNext(); ) {
+							DataOutputStream out = it.next();
+							try {
+								out.writeUTF(chatMessage);
+							} catch (IOException ioException) {
+								it.remove();
+								ioException.printStackTrace();
+							}
+						}
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				break;
+			}
 		}
 	}
 }
