@@ -82,7 +82,7 @@ class ServerChatListener extends Thread {
 		in = new DataInputStream(socket.getInputStream());
 		if (clientsOut == null)
 			clientsOut = new ArrayList<DataOutputStream>();
-		synchronized (this) {
+		synchronized (clientsOut) {
 			clientsOut.add(new DataOutputStream(socket.getOutputStream()));
 		}
 	}
@@ -93,7 +93,7 @@ class ServerChatListener extends Thread {
 			try {
 				chatMessage = in.readUTF();
 				if (chatMessage != null) {
-					synchronized (this) {
+					synchronized (clientsOut) {
 						for (Iterator<DataOutputStream> it = clientsOut.iterator(); it.hasNext(); ) {
 							DataOutputStream out = it.next();
 							try {
