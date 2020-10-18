@@ -15,7 +15,7 @@ public class Server extends Thread {
 	public void run() {
 
 		while (true) {
-			synchronized (this) {
+			synchronized (clientsOut) {
 				byte[] byteImg = imgQueue.poll();
 				if (byteImg != null) {
 					for (Iterator<DataOutputStream> it = clientsOut.iterator(); it.hasNext(); ) {
@@ -57,7 +57,9 @@ public class Server extends Thread {
 				System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
 				Socket server = serverSocket.accept();
 				System.out.println("Just connected to " + server.getRemoteSocketAddress());
-				clientsOut.add(new DataOutputStream(server.getOutputStream()));
+				synchronized (clientsOut) {
+					clientsOut.add(new DataOutputStream(server.getOutputStream()));
+				}
 
 				// chat
 				Socket chatSocket = serverSocketChat.accept();
