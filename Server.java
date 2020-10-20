@@ -54,7 +54,7 @@ public class Server extends Thread {
 			imgQueue = new LinkedList<byte[]>();
 			Thread serverThread = new Server();
 			serverThread.start();
-			ScreenPrinter.startScreenshots(2,30,imgQueue);
+			ScreenPrinter.startScreenshots(2,30);
 
 			while(true) { // reference: https://stackoverflow.com/questions/10131377/socket-programming-multiple-client-to-one-server
 				System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
