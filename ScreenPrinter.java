@@ -1,4 +1,6 @@
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -39,11 +41,12 @@ public class ScreenPrinter extends Thread {
 
                 // converting the screenshot into bytes
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(screenshot, "jpeg", baos);
+                ImageOutputStream stream = new MemoryCacheImageOutputStream(baos);
+                ImageIO.write(screenshot, "jpeg", stream);
+                stream.close();
 
-                byte[] byteImg = baos.toByteArray();
                 synchronized (imgQueue) {
-                    imgQueue.add(byteImg);
+                    imgQueue.add(baos.toByteArray());
                 }
 
             } catch (IOException e) {
