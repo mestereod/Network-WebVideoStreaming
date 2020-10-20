@@ -20,6 +20,7 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) { // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L185
                 String sentence = chat.getText();
+                if (sentence == null || sentence.equals("")) return;
                 try {
                     messageToServer.writeUTF(username + ": " + sentence + '\n');
                 } catch (IOException ioException) {
@@ -32,6 +33,7 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String sentence = chat.getText();
+                if (sentence == null || sentence.equals("")) return;
                 try {
                     messageToServer.writeUTF(username + ": " + sentence + '\n');
                 } catch (IOException ioException) {
@@ -45,6 +47,8 @@ public class GUI {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    public String getUsername() { return username; }
 
     public void setDataOutputStream(DataOutputStream messageToServer) {
         this.messageToServer = messageToServer;

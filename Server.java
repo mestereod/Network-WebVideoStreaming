@@ -15,8 +15,11 @@ public class Server extends Thread {
 	public void run() {
 
 		while (true) {
+			byte[] byteImg = null;
+			synchronized (imgQueue) {
+				byteImg = imgQueue.poll();
+			}
 			synchronized (clientsOut) {
-				byte[] byteImg = imgQueue.poll();
 				if (byteImg != null) {
 					for (Iterator<DataOutputStream> it = clientsOut.iterator(); it.hasNext(); ) {
 						DataOutputStream out = it.next();
@@ -33,7 +36,7 @@ public class Server extends Thread {
 			}
 
 			try {
-				Thread.sleep(15);
+				Thread.sleep(45);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

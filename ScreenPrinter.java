@@ -42,7 +42,7 @@ public class ScreenPrinter extends Thread {
                 ImageIO.write(screenshot, "jpeg", baos);
 
                 byte[] byteImg = baos.toByteArray();
-                synchronized (this) {
+                synchronized (imgQueue) {
                     imgQueue.add(byteImg);
                 }
 
