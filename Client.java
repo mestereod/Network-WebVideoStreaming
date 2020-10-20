@@ -21,6 +21,7 @@ public class Client extends Thread {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
+		ImageIO.setUseCache(false);
 
 		try {
 			System.out.println("Connecting to " + serverName + " on port " + portStreaming);

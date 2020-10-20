@@ -19,6 +19,7 @@ public class ScreenPrinter extends Thread {
         this.sleepTime = sleepTime;
         this.rb = new Robot(); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaServer.java#L151
         this.screen = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+        ImageIO.setUseCache(false);
     }
 
     public static void startScreenshots(int nThreads, int sleepTime, Queue<byte[]> queue) throws Exception{
