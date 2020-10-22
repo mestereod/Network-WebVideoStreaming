@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -45,6 +46,12 @@ public class Server extends Thread {
 	}
 
 	public static void main(String [] args) {
+
+		// GUI
+		JFrame frame = new JFrame("Server");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+
 		int port = 12345;
 		int portChat = 12346;
 		try {
@@ -54,7 +61,7 @@ public class Server extends Thread {
 			imgQueue = new LinkedList<byte[]>();
 			Thread serverThread = new Server();
 			serverThread.start();
-			ScreenPrinter.startScreenshots(2,30);
+			ScreenPrinter.startScreenshots(2,30, imgQueue);
 
 			while(true) { // reference: https://stackoverflow.com/questions/10131377/socket-programming-multiple-client-to-one-server
 				System.out.println("Waiting for client on port " + serverSocket.getLocalPort() + "...");
