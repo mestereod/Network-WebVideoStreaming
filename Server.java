@@ -89,12 +89,12 @@ public class Server extends Thread { //classe principal do servidor, onde é fei
 class ServerChatListener extends Thread { //classe focada em sincronizar os textos do chat entre os clientes
 
 	private static ArrayList<DataOutputStream> clientsOut; // arranjo contendo os dados de saida para os clientes
-	private DataInputStream in;
+	private DataInputStream in; //variavel para recebimento de textos dos clientes
 
 	public ServerChatListener(Socket socket) throws IOException {
 		in = new DataInputStream(socket.getInputStream());
 		if (clientsOut == null)
-			clientsOut = new ArrayList<DataOutputStream>();
+			clientsOut = new ArrayList<DataOutputStream>(); //inicializaçao do arranjo de dados de saida para os clientes
 		synchronized (clientsOut) {
 			clientsOut.add(new DataOutputStream(socket.getOutputStream()));
 		}
@@ -104,9 +104,10 @@ class ServerChatListener extends Thread { //classe focada em sincronizar os text
 		while(true) {
 			String chatMessage = null;
 			try {
-				chatMessage = in.readUTF();
+				chatMessage = in.readUTF(); //leitura do texto recebido
 				if (chatMessage != null) {
 					synchronized (clientsOut) {
+						//envio do texto recebido para todos os clientes
 						for (Iterator<DataOutputStream> it = clientsOut.iterator(); it.hasNext(); ) {
 							DataOutputStream out = it.next();
 							try {
