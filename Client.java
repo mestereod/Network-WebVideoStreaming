@@ -10,27 +10,28 @@ import java.util.UUID;
 
 public class Client extends Thread {
 
-	private DataInputStream in;
-	private JFrame frame;
-	private GUI gui;
+	private DataInputStream in; //armazena a stream da imagem recebida
+	private JFrame frame; //janela onde aparecerá imagem
+	private GUI gui; //interface gráfica geral do cliente
 
+	//Cliente inicializa com o hostname, port de stream e port de chat
 	public Client(String serverName, int portStreaming, int portChat ) {
 		frame = new JFrame("Streaming");
 		gui = new GUI();
-		frame.setContentPane(gui.root); // reference: https://www.youtube.com/watch?v=5vSyylPPEko
+		frame.setContentPane(gui.root);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
-		ImageIO.setUseCache(false);
+		ImageIO.setUseCache(false); //cache false para não salvar as imagens no disco
 
 		try {
 			System.out.println("Connecting to " + serverName + " on port " + portStreaming);
-			Socket client = new Socket(serverName, portStreaming);
-			InputStream inFromServer = client.getInputStream();
+			Socket client = new Socket(serverName, portStreaming); //criação do Socket para stream
+			InputStream inFromServer = client.getInputStream(); //getInputStream() captura o que o servidor está enviando
 			this.in = new DataInputStream(inFromServer);
 			System.out.println("Just connected to " + client.getRemoteSocketAddress());
 
-			Thread chat = new ChatListener(serverName, portChat, gui, frame);
+			Thread chat = new ChatListener(serverName, portChat, gui, frame); //aloca uma thread para o chat
 			chat.start();
 		}
 		catch (Exception e) {
@@ -44,18 +45,18 @@ public class Client extends Thread {
 		while (true) {
 			try {
 
-				int len = in.readInt(); // receiving the screenshot's length
+				int len = in.readInt(); // recebe o tamanho da imagem
 
 				byte[] byteImg = new byte[len];
-				in.readFully(byteImg, 0, len); // reading the screenshot
+				in.readFully(byteImg, 0, len); // le n bytes correspondentes à imagem recebida
 
-				BufferedImage img = ImageIO.read(new ByteArrayInputStream(byteImg)); // converting the bytes into an image
-				BufferedImage image = Scalr.resize(img,Scalr.Mode.FIT_TO_HEIGHT,gui.root.getWidth(), (gui.root.getHeight() - gui.chatPanel.getHeight()));
+				BufferedImage img = ImageIO.read(new ByteArrayInputStream(byteImg)); // converte a cadeia de bytes em uma imagem
+				BufferedImage image = Scalr.resize(img,Scalr.Mode.FIT_TO_HEIGHT,gui.root.getWidth(), (gui.root.getHeight() - gui.chatPanel.getHeight())); // ajusta a escala da imagem de acordo com o tamanho da janela do cliente
 
-				// showing the image on the GUI
+				//mostra a imagem na janela do cliente
 				if (img != null)
 					gui.label.setIcon(new ImageIcon(image)); // reference: https://github.com/Imran92/Java-UDP-Video-Stream-Server/blob/master/src/java_video_stream/JavaClient.java#L149
-
+				//atualiza a imagem
 				frame.getContentPane().repaint();
 
 				Thread.sleep(15);
@@ -84,18 +85,19 @@ public class Client extends Thread {
 
 class ChatListener extends Thread {
 
-	private DataOutputStream outChat;
-	private DataInputStream inChat;
+	private DataOutputStream outChat; //variável para armazenar a saída de texto, cliente -> servidor
+	private DataInputStream inChat; //variável para armazenar a entrada de texto, servidor -> cliente
 	private JFrame frame;
 	private GUI gui;
 
+	//construtor utilizando o hostname e o port do chat para se conectar 
 	public ChatListener(String serverName, int port, GUI gui, JFrame frame) throws IOException {
-		Socket chat = new Socket(serverName, port);
+		Socket chat = new Socket(serverName, port); //criação do socket do chat
 		this.outChat = new DataOutputStream(chat.getOutputStream());
 		this.inChat = new DataInputStream(chat.getInputStream());
 		this.gui = gui;
-		this.gui.setUsername(UUID.randomUUID().toString());
-		this.gui.setDataOutputStream(outChat);
+		this.gui.setUsername(UUID.randomUUID().toString()); //utilização do UUID para criação de identificadores no chat sem expor o IP.
+		this.gui.setDataOutputStream(outChat); //escreve o texto que o cliente enviou no campo de chat
 		this.frame = frame;
 	}
 
@@ -103,9 +105,9 @@ class ChatListener extends Thread {
 		while(true) {
 			String chatMessage = null;
 			try {
-				chatMessage = inChat.readUTF();
+				chatMessage = inChat.readUTF(); //faz a leitura do texto recebido
 				if (chatMessage != null) {
-					gui.view.append(chatMessage);
+					gui.view.append(chatMessage); //adiciona o texto recebido  no chat
 					gui.view.setCaretPosition(gui.view.getDocument().getLength());
 				}
 
